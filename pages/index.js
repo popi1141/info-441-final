@@ -1,8 +1,12 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import Link from "next/link";
+import useAuth from "../utils/auth";
+
 
 export default function Home() {
+  const auth = useAuth();
   return (
     <div className={styles.container}>
       <Head>
@@ -13,12 +17,13 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://clowntown.gg">ClownTown 🤡!</a>
+          Welcome to ClownTown 🤡!
         </h1>
 
-        <p className={styles.description}>
-          Get started by creating an account or logging in.
-        </p>
+          <p className={styles.description}>
+            {!auth.user ? <span> Get started by <a href="/login"> logging in </a> </span> : <span> What's up {auth.user?.displayName}? <a href="/logout"> Log Out? </a> </span> }
+          </p>
+
 
         <div className={styles.grid}>
           <a href="#" className={styles.card}>
