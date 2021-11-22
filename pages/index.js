@@ -23,10 +23,10 @@ export default function Home() {
           <p className={styles.description}>
             {!auth.user ? <span> Get started by <a href="/login"> logging in </a> </span> : <span> What's up {auth.user?.displayName}? <a href="/logout"> Log Out? </a> </span> }
           </p>
-
+          <p>{auth.user?.email}</p>
 
         <div className={styles.grid}>
-          <a href="#" className={styles.card}>
+          <a href="/displayClownsona/" className={styles.card}>
             <h2>😣 Clownsonas</h2>
             <p>Create your very own downloadable Clown avatar</p>
           </a>
