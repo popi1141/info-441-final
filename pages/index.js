@@ -4,7 +4,6 @@ import styles from '../styles/Home.module.css'
 import Link from "next/link";
 import useAuth from "../utils/auth";
 
-
 export default function Home() {
   const auth = useAuth();
   return (
@@ -31,7 +30,7 @@ export default function Home() {
             <p>Create your very own downloadable Clown avatar</p>
           </a>
 
-          <a href="#" className={styles.card}>
+          <a href="/tug_of_war" className={styles.card}>
             <h2>🧵 Tug of War</h2>
             <p>Pull a rope from a frenemy and earn tokens!</p>
           </a>

@@ -1,0 +1,41 @@
+<html>
+<head>
+    <script>
+        let ws = new WebSocket("ws://localhost:3000/gaming/queue")
+        function sendMessage() {
+            const val = document.getElementById("textInput").value
+            ws.send(val)
+        }
+
+        ws.onmessage = function(event) {
+            console.log(event.data)
+            try {
+                let resp = JSON.parse(event.data)
+                if (resp.type == "redirect") {
+                    console.log(resp)
+                    window.location.href = resp.url + `?gameId=${resp.gameid}`;
+                } else if (resp.type == "data") {
+                    document.getElementById("output").innerHTML += resp.content + "<br>"
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        ws.onopen = function(event) {
+            document.getElementById("output").innerHTML += event.data + "<br>"
+        }
+
+    </script>
+
+</head>
+<body>
+    <h1>Queue joiner</h1>
+
+    <input type=text id="textInput">
+    <button id="sendBtn" onclick="sendMessage()">send</button>
+
+    <h3>recieved info:</h3>
+    <div id = "output"></div>
+</body>
+</html>
