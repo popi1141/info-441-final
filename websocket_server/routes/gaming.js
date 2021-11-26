@@ -10,6 +10,8 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+import Queue from '../queue.js'
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
     // check that they're a valid player in the game...
@@ -18,85 +20,66 @@ router.get('/', function(req, res, next) {
     res.sendFile(path.join(__dirname,'/../public/ingame.html'));
 });
 
-// the queue itself
-let queue = {}
-// logs ids of people who are in queue
-let queuePlaceholders = []
+// gamesize
+const GAME_SIZE = 2
+// // the queue itself
+let queue = new Queue(GAME_SIZE)
 // game id to direct ppl
 let gameid = 0
-// track the number of people/id of people in queue
-let queuePosition = 0
 // active games
-let games = {}
-// MAJOR TODO: need to make it so that when someone leaves or disconnects
-// while in queue, it removes them from the queue and from the placeholders.
-// I may need to implement my own data structure to deal with that, but that is an after thanksgiving issue
+let games = new Map()
 // websocket stuff
 router.ws("/queue", (ws, req) => {
-  // add someone to the queue and increment the number of the queue position
-  queue[queuePosition] = ({
+  // add someone to the queue
+  let userData = {
     "socket": ws,
     "session_id": req.cookies["connect.sid"]
-  });
-  let myPosition = queuePosition
-  queuePlaceholders.push(queuePosition)
-  ++queuePosition
+  };
+  queue.enqueue(userData)
 
   // if two or more people are connected, pop them from the dict and send them to a game
-  console.log(Object.keys(queue).length)
-  if (Object.keys(queue).length >= 2) {
-    let players = {}
-    for (let i = 0; i < 2; i++) {
-      // redirect to game page
-      let j = {
-        type: "redirect",
-        url: "/gaming",
-        gameid: gameid
-      }
-      // get the oldest player in queue and retrieve their data
-      // then pop them from the queue obj
-      let player_pos = queuePlaceholders.shift()
-      let player = queue[player_pos]
-      delete queue[player_pos]
-      // say the user is not connected to the game
-      players[player.session_id] = {"connected": false}
-      // send the user the redirect with the game id
-      player.socket.send(JSON.stringify(j))
+  if (queue.length >= GAME_SIZE) {
+    // obj to redirect to game page
+    let j = {
+      type: "redirect",
+      url: "/gaming",
+      gameid: gameid
     }
+    // get the array of players from the queue
+    let players = queue.popQueue()
+    let gameData = []
+    players.forEach(item => {
+      // users are not connected to the game
+      gameData.push({
+        "user": userData.session_id,
+        "connected": false
+      })
+      // send the user the redirect info
+      item.socket.send(JSON.stringify(j))
+    })
     // store game data and increment game id
-    games[gameid] = {
-      "players": players,
+    games.set(gameid.toString(), {
+      "players": gameData,
       "sockets": [],
       "score": 0,
-      "minus": null
-    }
+      "minus": null,
+      "plus": null
+    })
     gameid++
   }
   // remove from queue
   ws.on("close", function close() {
-    console.log(myPosition)
-  })
-
-  // idk why this is here
-  ws.on("message", msg => {
-    // console.log(msg)
-    queue.forEach(socket => {
-      let j = {
-        type: "data",
-        content: "" + queue.length
-      }
-      socket.send(JSON.stringify(j))
-    })
+    queue.dequeue(userData)
   })
 })
 
 router.ws('/ingame', (ws, req) => {
-    // console.log(req.query.gameId)
     let gameid = req.query['gameId']
-    let gamedata = games[gameid]
+    let gamedata = games.get(gameid)
     let allowed_users = gamedata.players
     let user = req.cookies["connect.sid"]
-
+    console.log(req)
+    ws.send(JSON.stringify({"here": "a"}))
     // kill anyone who is trying to join and not allowed
     // if (allowed_users.has(req.cookies["connect.sid"])) {
     // is a TODO
@@ -108,9 +91,11 @@ router.ws('/ingame', (ws, req) => {
         msg: "",
       }
       if (gamedata.minus == null) {
-        gamedata.minus = req.cookies["connect.sid"]
+        gamedata.minus = user
         msg.msg = "You are Minus"
       } else {
+        // this is to debug lol
+        gamedata.plus = user
         msg.msg = "You are Plus"
       }
       ws.send(JSON.stringify(msg))
@@ -150,13 +135,6 @@ router.ws('/ingame', (ws, req) => {
         });
       }
     })
-
-
-    // wait for on connect, see if they are both connected
-    
-    // wait for two "ready's"
-    // send 3, 2, 1, go
-    // accepting messages that increase or decrease. 
-    })
-
+})
+  
 export default router;
