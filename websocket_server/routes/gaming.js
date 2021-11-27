@@ -10,7 +10,7 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-import Queue from '../queue.js'
+import Queue from '../modules/queue.js'
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -79,7 +79,6 @@ router.ws('/ingame', (ws, req) => {
     let allowed_users = gamedata.players
     let user = req.cookies["connect.sid"]
     console.log(req)
-    ws.send(JSON.stringify({"here": "a"}))
     // kill anyone who is trying to join and not allowed
     // if (allowed_users.has(req.cookies["connect.sid"])) {
     // is a TODO
@@ -136,5 +135,4 @@ router.ws('/ingame', (ws, req) => {
       }
     })
 })
-  
 export default router;
