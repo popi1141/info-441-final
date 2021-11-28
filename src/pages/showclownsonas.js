@@ -10,7 +10,7 @@ const fetcher = (url) => fetch(url).then((res) => res.json())
 function ClownsonaPage() {
   const auth = useAuth();
   var currentUser = auth.user;
-  const url = "http://localhost:3000/api/getsonanumber?uid="+currentUser.id;
+  const url = "/api/getsonanumber?uid="+currentUser.id;
 
   const { data, error } = useSWR(
     url,
