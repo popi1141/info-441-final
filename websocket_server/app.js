@@ -38,10 +38,8 @@ app.use('/gaming', gamingRouter);
 
 
 
+// app.listen(3000, () => {
+//   console.log('Example app listening at http://localhost:3000')
+// })
 
-
-app.listen(3000, () => {
-  console.log('Example app listening at http://localhost:3000')
-})
-
-// export default app;
+export default app;

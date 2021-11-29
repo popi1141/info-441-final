@@ -11,7 +11,11 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/app.js"
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [ "start" ],
+            "env": { "DEBUG": "express:* express-starter:server" },
+            "console": "integratedTerminal"
         }
     ]
 }

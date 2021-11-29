@@ -3,7 +3,7 @@
     <script>
         let ws = new WebSocket("ws://localhost:3000/gaming/queue")
         function sendMessage() {
-            const val = document.getElementById("textInput").value
+            const val = "test"
             ws.send(val)
         }
 
