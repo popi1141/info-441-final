@@ -28,7 +28,7 @@ Upon connecting, it assigns users a role, plus or minus in the JSON format:
 
 The msg is what we want to display to our user and can be ignored ultimately. The server tracks who is pulling in which direction.
 
-Upon sending this endpoint a message (whose contents do not matter), this endpoint will update the score, and then send users an updated score in the format:
+Upon sending this endpoint a message (whose contents do not matter, but it MUST be a message), this endpoint will update the score, and then send users an updated score in the format:
 
 {
     type: "play",
