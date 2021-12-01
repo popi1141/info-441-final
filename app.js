@@ -3,7 +3,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import enableWS from 'express-ws'
-import sessions from 'express-session'
+import sessions from 'cookie-session'
 
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
