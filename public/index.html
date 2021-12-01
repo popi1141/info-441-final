@@ -1,7 +1,8 @@
 <html>
 <head>
     <script>
-        let ws = new WebSocket("ws://localhost:3000/gaming/queue")
+        const PORT = process.env.PORT || 3000;
+        let ws = new WebSocket("ws://localhost:PORT/gaming/queue")
         function sendMessage() {
             const val = "test"
             ws.send(val)
