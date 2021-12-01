@@ -16,7 +16,7 @@ import Queue from '../modules/queue.js'
 router.get('/', function(req, res, next) {
     // check that they're a valid player in the game...
     // use auth tokens for this
-    console.log(req.query)
+    //console.log(req.query)
     res.sendFile(path.join(__dirname,'/../public/ingame.html'));
 });
 
@@ -78,7 +78,7 @@ router.ws('/ingame', (ws, req) => {
     let gamedata = games.get(gameid)
     let allowed_users = gamedata.players
     let user = req.cookies["connect.sid"]
-    console.log(req)
+    //console.log(req)
     // kill anyone who is trying to join and not allowed
     // if (allowed_users.has(req.cookies["connect.sid"])) {
     // is a TODO

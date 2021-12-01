@@ -1,42 +1,58 @@
 <html>
+
 <head>
     <script>
-        const PORT = process.env.PORT || 3000;
-        let ws = new WebSocket("ws://localhost:PORT/gaming/queue")
-        function sendMessage() {
-            const val = "test"
-            ws.send(val)
-        }
+        let myfunc = async function() {
 
-        ws.onmessage = function(event) {
-            console.log(event.data)
-            try {
-                let resp = JSON.parse(event.data)
-                if (resp.type == "redirect") {
-                    console.log(resp)
-                    window.location.href = resp.url + `?gameId=${resp.gameid}`;
-                } else if (resp.type == "data") {
-                    document.getElementById("output").innerHTML += resp.content + "<br>"
-                }
-            } catch (err) {
-                console.log(err)
+            //const PORT = process.env.PORT || 3000;
+            //let newPort = PORT;
+            var title = "wass";
+            let myh2 = title;
+            let portJSON = await fetch("/portNUM")
+            let port = await portJSON.json();
+            port = port["port"];
+            myh2 = port;
+            let ws = new WebSocket("ws://" + window.location.hostname + ":" + port + "/gaming/queue")
+            function sendMessage() {
+                const val = "test"
+                ws.send(val)
             }
-        }
+            ws.onmessage = function (event) {
+                //console.log(event.data)
+                try {
+                    let resp = JSON.parse(event.data)
+                    if (resp.type == "redirect") {
+                        //console.log(resp)
+                        window.location.href = resp.url + `?gameId=${resp.gameid}`;
+                    } else if (resp.type == "data") {
+                        document.getElementById("output").innerHTML += resp.content + "<br>"
+                    }
+                } catch (err) {
+                    console.log(err)
+                }
+            }
 
-        ws.onopen = function(event) {
-            document.getElementById("output").innerHTML += event.data + "<br>"
-        }
+            ws.onopen = function (event) {
+                document.getElementById("tryingstuff").innerText = myh2;
+                document.getElementById("output").innerHTML += event.data + "<br>"
+            }
 
+        }
+        myfunc();
     </script>
 
 </head>
+
 <body>
     <h1>Queue joiner</h1>
-
+    <h2>
+        <div id="tryingstuff"></div>
+    </h2>
     <input type=text id="textInput">
     <button id="sendBtn" onclick="sendMessage()">send</button>
 
     <h3>recieved info:</h3>
-    <div id = "output"></div>
+    <div id="output"></div>
 </body>
+
 </html>

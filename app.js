@@ -17,7 +17,9 @@ const __dirname = dirname(__filename);
 
 var app = express();
 enableWS(app)
-
+const PORT = process.env.PORT || 3000;
+app.set('port', process.env.PORT || 3000);
+console.log("will this print work " + PORT)
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -35,7 +37,6 @@ app.use(sessions({
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/gaming', gamingRouter);
-
 
 /*
 const PORT = process.env.PORT || 3000;
