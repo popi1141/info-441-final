@@ -38,8 +38,9 @@ app.use('/gaming', gamingRouter);
 
 
 
-// app.listen(3000, () => {
-//   console.log('Example app listening at http://localhost:3000')
-// })
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log('Example app listening at http://localhost:PORT')
+})
 
 export default app;
