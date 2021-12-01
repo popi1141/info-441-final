@@ -37,10 +37,10 @@ app.use('/users', usersRouter);
 app.use('/gaming', gamingRouter);
 
 
-
+/*
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log('Example app listening at http://localhost:PORT')
 })
-
+*/
 export default app;
