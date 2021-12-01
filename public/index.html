@@ -12,7 +12,7 @@
             let port = await portJSON.json();
             port = port["port"];
             myh2 = port;
-            let ws = new WebSocket("ws://" + window.location.hostname + ":" + port + "/gaming/queue")
+            let ws = new WebSocket("wss://" + window.location.hostname + ":" + port + "/gaming/queue")
             function sendMessage() {
                 const val = "test"
                 ws.send(val)
