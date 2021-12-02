@@ -119,7 +119,7 @@ function createRouter(io, sharedsesh) {
         return
       }
       if(gamedata.sockets.length == 2 && (gamedata.score < 19 && gamedata.score > -19)) {
-        // todo: needs to implement whatever auth we are using 
+        // todo: needs to implement whatever auth we are using
         // to do this better
         if(gamedata.minus == user) {
           gamedata.score = gamedata.score - 1
