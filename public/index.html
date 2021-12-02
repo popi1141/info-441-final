@@ -1,42 +1,19 @@
 <html>
 
 <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io("/queue");
+    </script>
     <script>
         let myfunc = async function() {
-
-            //const PORT = process.env.PORT || 3000;
-            //let newPort = PORT;
-            var title = "wass";
-            let myh2 = title;
-            let portJSON = await fetch("/portNUM")
-            let port = await portJSON.json();
-            port = port["port"];
-            myh2 = port;
-            let ws = new WebSocket("wss://" + window.location.hostname + ":" + port + "/gaming/queue")
-            function sendMessage() {
-                const val = "test"
-                ws.send(val)
-            }
-            ws.onmessage = function (event) {
-                //console.log(event.data)
-                try {
-                    let resp = JSON.parse(event.data)
-                    if (resp.type == "redirect") {
-                        //console.log(resp)
-                        window.location.href = resp.url + `?gameId=${resp.gameid}`;
-                    } else if (resp.type == "data") {
-                        document.getElementById("output").innerHTML += resp.content + "<br>"
-                    }
-                } catch (err) {
-                    console.log(err)
+            socket.on("redirect", async (msg) => {
+                msg = await JSON.parse(msg)
+                if (msg.type == "redirect") {
+                    console.log(msg)
+                    window.location.href = msg.url + `?gameId=${msg.gameid}&uid=${msg.userId}`;
                 }
-            }
-
-            ws.onopen = function (event) {
-                document.getElementById("tryingstuff").innerText = myh2;
-                document.getElementById("output").innerHTML += event.data + "<br>"
-            }
-
+            })
         }
         myfunc();
     </script>
@@ -49,7 +26,7 @@
         <div id="tryingstuff"></div>
     </h2>
     <input type=text id="textInput">
-    <button id="sendBtn" onclick="sendMessage()">send</button>
+    <button id="sendBtn">send</button>
 
     <h3>recieved info:</h3>
     <div id="output"></div>
