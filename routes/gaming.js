@@ -94,16 +94,10 @@ function createRouter(io, sharedsesh) {
     // if (allowed_users.has(req.cookies["connect.sid"])) {
     // is a TODO
     if (true) {
-      // todo: NO FUCKING CLUE WHY THIS WONT SEND TO EVERYONE???
-      socket.broadcast.emit("roles", "go")
-      // update the websocket
       gamedata.sockets.push(socket)
-
       if (gamedata.minus == null) {
-        gamedata.minus = user
+        gamedata.minus = socket.request._query.uid
       }
-      console.log(gamedata.minus)
-      console.log(socket.request._query.uid)
     } else {
       // kick from game
       let response = {
@@ -111,6 +105,14 @@ function createRouter(io, sharedsesh) {
         msg: "you are not a player in this game!"
       }
       socket.broadcast.emit("roles", JSON.stringify(response))
+    }
+
+    if (gamedata.sockets.length == 2) {
+      gamedata.sockets.forEach(item => {
+        item.broadcast.emit("roles", JSON.stringify({
+          player: gamedata.minus == item.request._query.uid
+        }))
+      });
     }
 
     socket.on("move", (msg) => {
@@ -130,17 +132,16 @@ function createRouter(io, sharedsesh) {
           type: "play",
           value: gamedata.score
         }
-        gamedata.sockets.forEach(socket => {
-          socket.broadcast.emit("play", JSON.stringify(msg))
+        gamedata.sockets.forEach(item => {
+          item.broadcast.emit("play", JSON.stringify(msg))
         });
-
       } else {
         let msg = {
           type: "gameover",
           winner: gamedata.score > 0 ? "Plus Wins" : "Minus Wins"
         }
-        gamedata.sockets.forEach(socket => {
-          socket.broadcast.emit("gameover", JSON.stringify(msg))
+        gamedata.sockets.forEach(item => {
+          item.broadcast.emit("gameover", JSON.stringify(msg))
         });
       }
     })
