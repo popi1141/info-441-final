@@ -1,0 +1,49 @@
+<html>
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString)
+      var socket = io("/ingame", {query: `gameId=${urlParams.get("gameId")}&uid=${urlParams.get("uid")}`});
+    </script>
+    <script>
+        function sendMsg(){
+            console.log("sending")
+            socket.emit("move", '')
+        }
+        socket.on("roles", async (msg) => {
+            // msg = await JSON.parse(msg)
+            console.log(msg)
+            // document.getElementById("player").innerText = msg.msg
+        })
+        socket.on("gameover",  async (msg) => {
+            msg = await JSON.parse(msg)
+            try {
+                document.getElementById("output").innerHTML = msg.winner
+            } catch (err) {
+                console.log(err)
+            }
+        })
+        socket.on("play",  async (msg) => {
+            msg = await JSON.parse(msg)
+            try {
+                document.getElementById("output").innerHTML = msg.value
+            } catch (err) {
+                console.log(err)
+            }
+        })
+    </script>
+
+</head>
+<body>
+    <h1>Youre in the game lol</h1>
+
+    <input type=text id="textInput">
+    <button id="sendBtn" onclick="sendMsg()">send</button>
+
+    <h3>recieved info:</h3>
+    <div id = "player"></div>
+    <div id = "score">0</div>
+    <div id = "output"></div>
+</body>
+</html>

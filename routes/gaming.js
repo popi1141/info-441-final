@@ -110,6 +110,7 @@ function createRouter(io, sharedsesh) {
     if (gamedata.sockets.length == 2) {
       gamedata.sockets.forEach(item => {
         item.broadcast.emit("roles", JSON.stringify({
+          // TODO: REPLACE WITH USER AUTH
           player: gamedata.minus == item.request._query.uid
         }))
       });
