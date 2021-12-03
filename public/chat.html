@@ -8,20 +8,23 @@
     </script>
     <script>
         function sendMsg() {
-            socket.emit("move", '')
+            let textBox = document.getElementById()
+            socket.emit("chat message", 'message!')
         }
+        socket.on("cr", async (msg, user) => {
+            console.log(msg)
+        } )
     </script>
 
 </head>
 <body>
-    <h1>Youre in the game lol</h1>
+    <h1>Youre in the chat lol</h1>
 
     <input type=text id="textInput">
     <button id="sendBtn" onclick="sendMsg()">send</button>
 
     <h3>recieved info:</h3>
-    <div id = "player"></div>
-    <div id = "score">0</div>
-    <div id = "output"></div>
+
+
 </body>
 </html>

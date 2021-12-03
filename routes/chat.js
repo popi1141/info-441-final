@@ -22,15 +22,20 @@ function createRouter(io, sharedsesh) {
   });
 
   _chat.on("connection", (socket) => {
+    // join chatroom
+    socket.join("chat")
     // to everyone update userlist
-    socket.emit("joined room")
+    // socket.to("chat").emit("xd", "joined!")`
     // chat messages
     socket.on("chat message", (msg) => {
-      socket.broadcast.emit("this is a mf test lol")
+      console.log(msg)
+      socket.to('chat').emit("cr", msg, socket.request.session.id)
+      console.log("done")
     })
     // in the room actively
     socket.on("disconnect", () => {
       // resend the user list
+      console.log("bye")
     })
   })
     return router
