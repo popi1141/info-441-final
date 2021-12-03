@@ -13,16 +13,42 @@
             let new_msg = `<p>${user}: ${msg} </p>`
             chat.innerHTML = chat.innerHTML + new_msg
         }
+        function updateLog(arr) {
+            arr.forEach(item => {
+                updateChat(item.msg, item.user)
+            })
+        }
+        function updateUsers(arr) {
+            let users = document.getElementById("activeUsers")
+            users.innerHTML = ""
+            let html = ""
+            arr.forEach(item => {
+                html += `<p>${item}</p>`
+            })
+            users.innerHTML = html
+        }
         function sendMsg() {
             let textBox = document.getElementById("textInput")
-            console.log(textBox.value)
             socket.emit("chat message", textBox.value)
-            updateChat(textBox.value, "me!")
             textBox.value = ""
         }
         socket.on("cr", async (msg, user) => {
             console.log(msg)
             updateChat(msg, user)
+        })
+        socket.on("cr2", async (msg, user) => {
+            console.log(msg)
+            updateChat(msg, user)
+        })
+
+        socket.on("users", async (users) => {
+            console.log("users!")
+            updateUsers(users)
+        })
+        socket.on("joining", async (users, log) => {
+            console.log("users2!")
+            updateUsers(users)
+            updateLog(log)
         })
     </script>
 
@@ -33,6 +59,7 @@
     <input type=text id="textInput">
     <button id="sendBtn" onclick="sendMsg()">send</button>
 
+    <div id="activeUsers"></div>
     <h3>recieved info:</h3>
     <div id="chatResults">
     </div>
