@@ -2,36 +2,14 @@
 <head>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString)
-      var socket = io("/ingame", {query: `gameId=${urlParams.get("gameId")}&uid=${urlParams.get("uid")}`});
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString)
+        var socket = io("/chat");
     </script>
     <script>
-        function sendMsg(){
-            console.log("sending")
+        function sendMsg() {
             socket.emit("move", '')
         }
-        socket.on("roles", async (msg) => {
-            // msg = await JSON.parse(msg)
-            console.log(msg)
-            // document.getElementById("player").innerText = msg.msg
-        })
-        socket.on("gameover",  async (msg) => {
-            msg = await JSON.parse(msg)
-            try {
-                document.getElementById("output").innerHTML = msg.winner
-            } catch (err) {
-                console.log(err)
-            }
-        })
-        socket.on("play",  async (msg) => {
-            msg = await JSON.parse(msg)
-            try {
-                document.getElementById("output").innerHTML = msg.value
-            } catch (err) {
-                console.log(err)
-            }
-        })
     </script>
 
 </head>

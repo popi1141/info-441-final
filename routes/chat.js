@@ -10,7 +10,7 @@ const __dirname = dirname(__filename);
 function createRouter(io, sharedsesh) {
   var router = express.Router();
   const _chat = io.of("/chat")
-  _queue.use((socket, next) => {
+  _chat.use((socket, next) => {
     sharedsesh(socket.request, {}, next)
   })
   /* GET home page. */
@@ -26,7 +26,6 @@ function createRouter(io, sharedsesh) {
     socket.emit("joined room")
     // chat messages
     socket.on("chat message", (msg) => {
-      // one person
       socket.broadcast.emit("this is a mf test lol")
     })
     // in the room actively

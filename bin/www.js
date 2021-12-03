@@ -12,6 +12,7 @@ import session from 'express-session';
 import indexRouter from '../routes/index.js';
 import usersRouter from '../routes/users.js';
 import gamingRouter from '../routes/gaming.js';
+import chatRouter from '../routes/chat.js';
 
 import { Server } from "socket.io";
 
@@ -46,6 +47,7 @@ app.set('socketio', io)
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/gaming', gamingRouter(io, sessionMiddleware));
+app.use('/chat', chatRouter(io, sessionMiddleware));
 
 
 /**
