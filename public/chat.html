@@ -7,13 +7,23 @@
         var socket = io("/chat");
     </script>
     <script>
+        function updateChat(msg, user) {
+            let chat = document.getElementById('chatResults')
+            console.log(chat)
+            let new_msg = `<p>${user}: ${msg} </p>`
+            chat.innerHTML = chat.innerHTML + new_msg
+        }
         function sendMsg() {
-            let textBox = document.getElementById()
-            socket.emit("chat message", 'message!')
+            let textBox = document.getElementById("textInput")
+            console.log(textBox.value)
+            socket.emit("chat message", textBox.value)
+            updateChat(textBox.value, "me!")
+            textBox.value = ""
         }
         socket.on("cr", async (msg, user) => {
             console.log(msg)
-        } )
+            updateChat(msg, user)
+        })
     </script>
 
 </head>
@@ -24,6 +34,8 @@
     <button id="sendBtn" onclick="sendMsg()">send</button>
 
     <h3>recieved info:</h3>
+    <div id="chatResults">
+    </div>
 
 
 </body>
