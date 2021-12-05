@@ -18,7 +18,8 @@ const __dirname = dirname(__filename);
 var app = express();
 const PORT = process.env.PORT || 3000;
 app.set('port', process.env.PORT || 3000);
-console.log("will this print work " + PORT)
+console.log("will this print work " + PORT);
+console.log("yolo");
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

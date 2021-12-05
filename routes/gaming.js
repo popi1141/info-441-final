@@ -37,10 +37,21 @@ function createRouter(io, sharedsesh) {
 
   _queue.on("connection", (socket) => {
     // add someone to the queue
+    let id_player;
+    let report;
+    if(socket.request.session.user){
+      id_player = socket.request.session.user;
+      report = true;
+    }
+    else{
+      id_player = socket.request.session.id;
+      report = false;
+    }
     let userData = {
       "socket": socket,
       // TODO REPLACE THIS WITH USER AUTH
-      "session_id": socket.request.session.id
+      "session_id": id_player,
+      "report": report
     };
     queue.enqueue(userData)
     // if two or more people are connected, pop them from the dict and send them to a game
@@ -54,7 +65,7 @@ function createRouter(io, sharedsesh) {
         gameData.push({
           // TODO: REPLACE WITH USER AUTH
           "user": item.session_id,
-          "connected": false
+          "connected": item.report
         })
         // send the user the redirect info
         item.socket.broadcast.emit("redirect", JSON.stringify({
@@ -95,8 +106,39 @@ function createRouter(io, sharedsesh) {
     // is a TODO
     if (true) {
       gamedata.sockets.push(socket)
+      let id_player;
+      if(socket.request.session.user){
+        id_player = socket.request.session.user;
+      }
+      else{
+        id_player = socket.request.session.id;
+      }
+
+      console.log("id_player")
+      console.log(id_player);
       if (gamedata.minus == null) {
-        gamedata.minus = socket.request._query.uid
+        console.log("setting minus")
+        gamedata.minus = id_player
+      }
+      else if (gamedata.plus == null) {
+        console.log("setting plus")
+        gamedata.plus = id_player
+
+        console.log("after first setting")
+        console.log("plus: " + gamedata.plus)
+        console.log("minus: " + gamedata.minus)
+        
+
+        console.log("flipping")
+        //for some reason they always flip, this is just a correction
+        let tempPlus = gamedata.plus;
+        console.log("one line")
+        gamedata.plus = gamedata.minus;
+        console.log("two line")
+        gamedata.minus = tempPlus;
+        console.log("plus: " + gamedata.plus)
+        console.log("minus: " + gamedata.minus)
+        console.log("thee line")
       }
     } else {
       // kick from game
@@ -137,6 +179,7 @@ function createRouter(io, sharedsesh) {
           item.broadcast.emit("play", JSON.stringify(msg))
         });
       } else {
+        console.log(gamedata);
         let msg = {
           type: "gameover",
           winner: gamedata.score > 0 ? "Plus Wins" : "Minus Wins"

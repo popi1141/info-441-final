@@ -16,4 +16,17 @@ router.get('/portNUM', function(req, res, next) {
   res.send(JSON.stringify({port: req.app.get('port')}));
 });
 
+router.get('/playingAs', function(req, res, next) {
+  if(req.query.user)
+    req.session.user = req.query.user
+  res.type('json')
+  res.redirect("/");
+});
+
+router.get('/getRanked', function(req, res, next) {
+  res.type('json')
+  res.send(JSON.stringify({user: req.session.user}));
+});
+
+
 export default router;
