@@ -28,5 +28,9 @@ router.get('/getRanked', function(req, res, next) {
   res.send(JSON.stringify({user: req.session.user}));
 });
 
+router.get('/api/registerWin', function(req, res, next) {
+  res.type('json')
+  res.send(JSON.stringify({user: req.query.uid}));
+});
 
 export default router;

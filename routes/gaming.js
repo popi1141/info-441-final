@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import fetch from "node-fetch";
 // import enableWS from 'express-ws'
 
 import { fileURLToPath } from 'url';
@@ -114,31 +115,13 @@ function createRouter(io, sharedsesh) {
         id_player = socket.request.session.id;
       }
 
-      console.log("id_player")
-      console.log(id_player);
       if (gamedata.minus == null) {
-        console.log("setting minus")
-        gamedata.minus = id_player
+        gamedata.minus = socket.request._query.uid
       }
       else if (gamedata.plus == null) {
-        console.log("setting plus")
-        gamedata.plus = id_player
+        gamedata.plus = socket.request._query.uid
 
-        console.log("after first setting")
-        console.log("plus: " + gamedata.plus)
-        console.log("minus: " + gamedata.minus)
-        
 
-        console.log("flipping")
-        //for some reason they always flip, this is just a correction
-        let tempPlus = gamedata.plus;
-        console.log("one line")
-        gamedata.plus = gamedata.minus;
-        console.log("two line")
-        gamedata.minus = tempPlus;
-        console.log("plus: " + gamedata.plus)
-        console.log("minus: " + gamedata.minus)
-        console.log("thee line")
       }
     } else {
       // kick from game
@@ -179,10 +162,25 @@ function createRouter(io, sharedsesh) {
           item.broadcast.emit("play", JSON.stringify(msg))
         });
       } else {
-        console.log(gamedata);
+        let winner = gamedata.score > 0 ? gamedata.minus : gamedata.plus;
+        let playersReport = {};
+        gamedata.players.forEach(function(currentPlayer){
+          playersReport[currentPlayer.user] = currentPlayer.connected
+        })
+        if(playersReport[winner])
+        {
+          fetch("http://localhost:3000/api/registerWin?uid=" + winner)
+          .then(function(registerResponse){
+            console.log(registerResponse);
+          })
+          .catch(function(error){
+            console.log(error);
+          })
+        }
+        let winnerBlurb = playersReport[winner] ? winner + " wins" : "An unknown player wins"
         let msg = {
           type: "gameover",
-          winner: gamedata.score > 0 ? "Plus Wins" : "Minus Wins"
+          winner: winnerBlurb
         }
         gamedata.sockets.forEach(item => {
           item.broadcast.emit("gameover", JSON.stringify(msg))
