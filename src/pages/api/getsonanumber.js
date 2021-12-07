@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Cache-Control', 'max-age=0');
-    res.json({ name: response.name, number: response.clownsona})
+    res.json({ name: response.name, number: response.clownsona, email: response.email})
   }
   catch(error) {
     res.json(error);
