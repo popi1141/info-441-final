@@ -43,9 +43,9 @@ function createRouter(io, sharedsesh) {
 
     // chat messages
     socket.on("chat message", (msg) => {
-      socket.to('chat').emit("cr", msg, socket.request.session.id)
-      socket.emit("cr2", msg, socket.request.session.id)
-      logs.add({user: socket.request.session.id, "msg": msg})
+      socket.to('chat').emit("cr", msg, (socket.request.session.screenName ? socket.request.session.screenName : socket.request.session.id))
+      socket.emit("cr2", msg, (socket.request.session.screenName ? socket.request.session.screenName : socket.request.session.id))
+      logs.add({user: (socket.request.session.screenName ? socket.request.session.screenName : socket.request.session.id), "msg": msg})
     })
     // in the room actively
     socket.on("disconnect", () => {
