@@ -25,6 +25,7 @@ router.get('/playingAs', async function(req, res, next) {
       let fetchResult = await fetch("https://info-441-final.vercel.app/api/getsonanumber?uid=" + req.query.user);
       let myJson = await fetchResult.json();
       req.session.screenName = myJson.email;
+      req.session.sonanumber = myJson.sonanumber;
     }catch(error){console.log(error)}
   }
   res.type('json')
@@ -42,6 +43,7 @@ router.get('/getRanked', function(req, res, next) {
   res.send(JSON.stringify({user: req.session.user, screenName: req.session.screenName}));
 });
 
+// todo: use mongo to store this stuff.
 router.get('/api/registerWin', function(req, res, next) {
   res.type('json')
   res.send(JSON.stringify({user: req.query.uid}));
