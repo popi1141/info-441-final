@@ -169,7 +169,7 @@ function createRouter(io, sharedsesh) {
         })
         if(playersReport[winner])
         {
-          fetch("https://info-441-final.vercel.app/registerWin?uid=" + winner)
+          fetch("https://info-441-final.vercel.app/api/registerWin?uid=" + winner)
           .then(function(registerResponse){
             console.log(registerResponse);
           })
