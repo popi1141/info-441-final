@@ -1,0 +1,64 @@
+<html>
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script>
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString)
+      var socket = io("/ingame", {query: `gameId=${urlParams.get("gameId")}&uid=${urlParams.get("uid")}`});
+    </script>
+    <script>
+        function sendMsg(){
+            socket.emit("move", '')
+        }
+        socket.on("roles", async (msg) => {
+            msg = await JSON.parse(msg)
+            console.log(msg)
+            document.getElementById("player-a").innerText = msg.minus ? `You: ${msg.left}` : msg.left
+            document.getElementById("player-b").innerText = !msg.minus ? `You: ${msg.right}` : msg.right
+            document.getElementById("output").innerHTML = msg.score
+        })
+        socket.on("gameover",  async (msg) => {
+            msg = await JSON.parse(msg)
+            try {
+                document.getElementById("output").innerHTML = msg.winner
+            } catch (err) {
+                console.log(err)
+            }
+        })
+        socket.on("play",  async (msg) => {
+            msg = await JSON.parse(msg)
+            try {
+                document.getElementById("output").innerHTML = msg.value
+            } catch (err) {
+                console.log(err)
+            }
+        })
+        socket.on("fatal", async (msg) => {
+            // maybe switch some flags around? idk.
+            document.getElementById("center").innerHTML = msg
+        })
+    </script>
+
+</head>
+<body>
+    <div class="center" id="center">
+        <h1>Tug of War!</h1>
+        <div id = "player"></div>
+        <div id="game">
+            <!-- player a -->
+            <div id="player-a">
+
+            </div>
+            <!-- image stuff -->
+            <div>
+
+            </div>
+            <div id="player-b"></div>
+        </div>
+        <div id = "output">0</div>
+        <button id="sendBtn" onclick="sendMsg()">PULL!!</button>
+    </div>
+
+</body>
+</html>
