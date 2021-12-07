@@ -24,7 +24,15 @@ function createRouter(io, sharedsesh) {
   let logs = new ChatHistory(20)
   _chat.on("connection", (socket) => {
     // todo: update this to work with firebase
-    let user = socket.request.session.id
+    let user;
+    if(socket.request.session.screenName)
+    {
+      user = socket.request.session.screenName;
+    }
+    else{
+      user = socket.request.session.id;
+    }
+    
     users.add(user)
     // join chatroom
     socket.join("chat")

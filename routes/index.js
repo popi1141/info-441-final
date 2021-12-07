@@ -28,7 +28,13 @@ router.get('/playingAs', async function(req, res, next) {
     }catch(error){console.log(error)}
   }
   res.type('json')
-  res.redirect("/");
+  if(req.query.chat){
+    res.redirect("/chat");
+  }
+  else{
+    res.redirect("/");
+  }
+
 });
 
 router.get('/getRanked', function(req, res, next) {
