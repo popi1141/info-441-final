@@ -36,9 +36,11 @@ function IndexPage(props) {
             <p>Pull a rope from a frenemy and earn tokens!</p>
           </a>
 
-          <a href="#" className={styles.card}>
-            <h2>🏪 Store</h2>
-            <p>Buy cool stuff with your clown tokens!</p>
+          <a href={currentUser ? 
+            "https://protected-springs-39543.herokuapp.com/playingAs?user=" + currentUser.id +"&chat=true"
+            : "https://protected-springs-39543.herokuapp.com/chat"} className={styles.card}>
+            <h2>💬 Clown Void Chat</h2>
+            <p>Scream into the void with your fellow clowns!</p>
           </a>
         </div>
       </main>
