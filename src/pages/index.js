@@ -1,8 +1,12 @@
 import React from "react";
 import Meta from "components/Meta";
 import styles from 'styles/Home.module.css';
+import { useAuth } from "util/auth";
 
 function IndexPage(props) {
+  const auth = useAuth();
+  var currentUser = auth.user;
+  console.log(currentUser);
   return (
     <>
       <Meta />
@@ -25,7 +29,9 @@ function IndexPage(props) {
             <p>Create your very own downloadable Clown avatar</p>
           </a>
 
-          <a href="#" className={styles.card}>
+          <a href={currentUser ? 
+            "https://protected-springs-39543.herokuapp.com/playingAs?user=" + currentUser.id 
+            : "https://protected-springs-39543.herokuapp.com/"} className={styles.card}>
             <h2>🧵 Tug of War</h2>
             <p>Pull a rope from a frenemy and earn tokens!</p>
           </a>
