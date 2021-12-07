@@ -9,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import Queue from '../modules/queue.js'
 import e from 'express';
+import gameDNE from '../modules/gameDNE.js';
 
 function createRouter(io, sharedsesh) {
   var router = express.Router();
@@ -54,7 +55,7 @@ function createRouter(io, sharedsesh) {
       screenName = socket.request.session.screenName;
     }
     else {
-      screenName = id_player;
+      screenName = `Guest ${queue.length}`;
     }
     let userData = {
       "socket": socket,
@@ -90,7 +91,7 @@ function createRouter(io, sharedsesh) {
       // store game data and increment game id
       games.set(gameid.toString(), {
         "players": gameData,
-        "sockets": [],
+        "sockets": new Map(),
         "score": 0,
         "minus": null,
         "plus": null
@@ -105,6 +106,7 @@ function createRouter(io, sharedsesh) {
   })
   _ingame.on('connection', (socket) => {
     if (games.size == 0) {
+      gameDNE(socket, "This game does not exist!")
       return
     }
     let gameid = socket.request._query.gameId
@@ -112,11 +114,15 @@ function createRouter(io, sharedsesh) {
     let user = socket.request._query.uid
     let gamedata = games.get(gameid)
     let allowed_users = gamedata.players
+    if (!gamedata) {
+      gameDNE(socket, "This game does not exist!")
+      return
+    }
     // kill anyone who is trying to join and not allowed
     // if (allowed_users.has(req.cookies["connect.sid"])) {
     // is a TODO
     if (true) {
-      gamedata.sockets.push(socket)
+      gamedata.sockets.set(user, socket)
       let id_player;
       if (socket.request.session.user) {
         id_player = socket.request.session.user;
@@ -130,49 +136,57 @@ function createRouter(io, sharedsesh) {
       }
       else if (gamedata.plus == null) {
         gamedata.plus = socket.request._query.uid
-
-
       }
     } else {
       // kick from game
-      let response = {
-        type: "error",
-        msg: "you are not a player in this game!"
-      }
-      socket.broadcast.emit("roles", JSON.stringify(response))
+      gameDNE(socket, "You are not a player in this game!!")
+      return
     }
 
-    if (gamedata.sockets.length == 2) {
-      gamedata.sockets.forEach(item => {
-        item.broadcast.emit("roles", JSON.stringify({
-          // TODO: REPLACE WITH USER AUTH
-          player: gamedata.minus == item.request._query.uid
-        }))
-      });
+    if (gamedata.sockets.size == 2) {
+      let gameInfo = {
+        "score": gamedata.score
+      };
+      for (let i = 0; i < 2; i++) {
+        let uid = gamedata.players[i].user
+        let s = gamedata.sockets.get(uid)
+        let isPlus = gamedata.minus != s.request._query.uid
+        if (isPlus) {
+          gameInfo["right"] = gamedata.players[i].screenName
+          gameInfo["rightuid"] = gamedata.players[i].user
+        } else {
+          gameInfo["left"] = gamedata.players[i].screenName
+          gameInfo["leftuid"] = gamedata.players[i].user
+        }
+      }
+      for (let i = 0; i < 2; i++) {
+        let uid = gamedata.players[i].user
+        let s = gamedata.sockets.get(uid)
+        gameInfo["minus"] = gameInfo.leftuid == s.request._query.uid
+        s.emit("roles", JSON.stringify(gameInfo))
+      }
     }
 
     socket.on("move", (msg) => {
-      // return if we have no active game for this socket...
       if (!gamedata) {
         return
       }
-      if (gamedata.sockets.length == 2 && (gamedata.score < 19 && gamedata.score > -19)) {
-        // todo: needs to implement whatever auth we are using
-        // to do this better
+      if (gamedata.sockets.size == 2 && (gamedata.score < 19 && gamedata.score > -19)) {
+        // do a play of the game...
         if (gamedata.minus == user) {
           gamedata.score = gamedata.score - 1
         } else {
           gamedata.score = gamedata.score + 1
         }
         let msg = {
-          type: "play",
           value: gamedata.score
         }
         gamedata.sockets.forEach(item => {
           item.broadcast.emit("play", JSON.stringify(msg))
         });
       } else {
-        let winner = gamedata.score > 0 ? gamedata.minus : gamedata.plus;
+        // the game is over if we get here.
+        let winner = gamedata.score < 0 ? gamedata.minus : gamedata.plus;
         let playersReport = {};
         let playersScreen = {};
         gamedata.players.forEach(function (currentPlayer) {
@@ -185,7 +199,7 @@ function createRouter(io, sharedsesh) {
               console.log(error);
             })
         }
-        let winnerBlurb = playersReport[winner] ? playersScreen[winner] + " wins" : "An unknown player wins"
+        let winnerBlurb = playersScreen[winner] + " wins"
         let msg = {
           type: "gameover",
           winner: winnerBlurb
@@ -193,6 +207,11 @@ function createRouter(io, sharedsesh) {
         gamedata.sockets.forEach(item => {
           item.broadcast.emit("gameover", JSON.stringify(msg))
         });
+        // destroy game and disconnect websockets
+        games.delete(gameid)
+        gamedata.sockets.forEach(item => {
+          item.disconnect(0)
+        })
       }
     })
   })
