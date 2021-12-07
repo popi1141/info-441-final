@@ -1,5 +1,6 @@
 import { enable } from 'debug';
 import express from 'express';
+import fetch from "node-fetch";
 
 var router = express.Router();
 /* GET home page. */
@@ -16,16 +17,23 @@ router.get('/portNUM', function(req, res, next) {
   res.send(JSON.stringify({port: req.app.get('port')}));
 });
 
-router.get('/playingAs', function(req, res, next) {
+router.get('/playingAs', async function(req, res, next) {
   if(req.query.user)
+  {
     req.session.user = req.query.user
+    try{
+      let fetchResult = await fetch("https://info-441-final.vercel.app/api/getsonanumber?uid=" + req.query.user);
+      let myJson = await fetchResult.json();
+      req.session.screenName = myJson.email;
+    }catch(error){console.log(error)}
+  }
   res.type('json')
   res.redirect("/");
 });
 
 router.get('/getRanked', function(req, res, next) {
   res.type('json')
-  res.send(JSON.stringify({user: req.session.user}));
+  res.send(JSON.stringify({user: req.session.user, screenName: req.session.screenName}));
 });
 
 router.get('/api/registerWin', function(req, res, next) {

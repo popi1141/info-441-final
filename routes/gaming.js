@@ -8,6 +8,7 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import Queue from '../modules/queue.js'
+import e from 'express';
 
 function createRouter(io, sharedsesh) {
   var router = express.Router();
@@ -20,11 +21,11 @@ function createRouter(io, sharedsesh) {
     sharedsesh(socket.request, {}, next)
   })
   /* GET home page. */
-  router.get('/', function(req, res, next) {
-      // check that they're a valid player in the game...
-      // use auth tokens for this
-      //console.log(req.query)
-      res.sendFile(path.join(__dirname,'/../public/ingame.html'));
+  router.get('/', function (req, res, next) {
+    // check that they're a valid player in the game...
+    // use auth tokens for this
+    //console.log(req.query)
+    res.sendFile(path.join(__dirname, '/../public/ingame.html'));
   });
 
   // gamesize
@@ -40,19 +41,27 @@ function createRouter(io, sharedsesh) {
     // add someone to the queue
     let id_player;
     let report;
-    if(socket.request.session.user){
+    let screenName;
+    if (socket.request.session.user) {
       id_player = socket.request.session.user;
       report = true;
     }
-    else{
+    else {
       id_player = socket.request.session.id;
       report = false;
+    }
+    if (socket.request.session.screenName) {
+      screenName = socket.request.session.screenName;
+    }
+    else {
+      screenName = id_player;
     }
     let userData = {
       "socket": socket,
       // TODO REPLACE THIS WITH USER AUTH
       "session_id": id_player,
-      "report": report
+      "report": report,
+      "screenName": screenName
     };
     queue.enqueue(userData)
     // if two or more people are connected, pop them from the dict and send them to a game
@@ -66,7 +75,8 @@ function createRouter(io, sharedsesh) {
         gameData.push({
           // TODO: REPLACE WITH USER AUTH
           "user": item.session_id,
-          "connected": item.report
+          "connected": item.report,
+          "screenName":item.screenName
         })
         // send the user the redirect info
         item.socket.broadcast.emit("redirect", JSON.stringify({
@@ -94,7 +104,7 @@ function createRouter(io, sharedsesh) {
     })
   })
   _ingame.on('connection', (socket) => {
-    if (games.size == 0){
+    if (games.size == 0) {
       return
     }
     let gameid = socket.request._query.gameId
@@ -108,10 +118,10 @@ function createRouter(io, sharedsesh) {
     if (true) {
       gamedata.sockets.push(socket)
       let id_player;
-      if(socket.request.session.user){
+      if (socket.request.session.user) {
         id_player = socket.request.session.user;
       }
-      else{
+      else {
         id_player = socket.request.session.id;
       }
 
@@ -146,10 +156,10 @@ function createRouter(io, sharedsesh) {
       if (!gamedata) {
         return
       }
-      if(gamedata.sockets.length == 2 && (gamedata.score < 19 && gamedata.score > -19)) {
+      if (gamedata.sockets.length == 2 && (gamedata.score < 19 && gamedata.score > -19)) {
         // todo: needs to implement whatever auth we are using
         // to do this better
-        if(gamedata.minus == user) {
+        if (gamedata.minus == user) {
           gamedata.score = gamedata.score - 1
         } else {
           gamedata.score = gamedata.score + 1
@@ -164,20 +174,18 @@ function createRouter(io, sharedsesh) {
       } else {
         let winner = gamedata.score > 0 ? gamedata.minus : gamedata.plus;
         let playersReport = {};
-        gamedata.players.forEach(function(currentPlayer){
+        let playersScreen = {};
+        gamedata.players.forEach(function (currentPlayer) {
           playersReport[currentPlayer.user] = currentPlayer.connected
+          playersScreen[currentPlayer.user] = currentPlayer.screenName
         })
-        if(playersReport[winner])
-        {
+        if (playersReport[winner]) {
           fetch("https://info-441-final.vercel.app/api/registerWin?uid=" + winner)
-          .then(function(registerResponse){
-            console.log(registerResponse);
-          })
-          .catch(function(error){
-            console.log(error);
-          })
+            .catch(function (error) {
+              console.log(error);
+            })
         }
-        let winnerBlurb = playersReport[winner] ? winner + " wins" : "An unknown player wins"
+        let winnerBlurb = playersReport[winner] ? playersScreen[winner] + " wins" : "An unknown player wins"
         let msg = {
           type: "gameover",
           winner: winnerBlurb
