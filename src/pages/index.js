@@ -30,15 +30,15 @@ function IndexPage(props) {
           </a>
 
           <a href={currentUser ? 
-            "https://protected-springs-39543.herokuapp.com/playingAs?user=" + currentUser.id 
-            : "https://protected-springs-39543.herokuapp.com/"} className={styles.card}>
+            "https://play.clowntown.me/playingAs?user=" + currentUser.id 
+            : "https://play.clowntown.me/"} className={styles.card}>
             <h2>🧵 Tug of War</h2>
             <p>Pull a rope from a frenemy and earn tokens!</p>
           </a>
 
           <a href={currentUser ? 
-            "https://protected-springs-39543.herokuapp.com/playingAs?user=" + currentUser.id +"&chat=true"
-            : "https://protected-springs-39543.herokuapp.com/chat"} className={styles.card}>
+            "https://play.clowntown.me/playingAs?user=" + currentUser.id +"&chat=true"
+            : "https://play.clowntown.me/chat"} className={styles.card}>
             <h2>💬 Clown Void Chat</h2>
             <p>Scream into the void with your fellow clowns!</p>
           </a>
