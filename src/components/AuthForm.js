@@ -15,20 +15,17 @@ function AuthForm(props) {
   const submitHandlersByType = {
     signin: ({ email, pass }) => {
       return auth.signin(email, pass).then((user) => {
-        // Call auth complete handler
         props.onAuth(user);
       });
     },
     signup: ({ email, pass }) => {
       return auth.signup(email, pass).then((user) => {
-        // Call auth complete handler
         props.onAuth(user);
       });
     },
     forgotpass: ({ email }) => {
       return auth.sendPasswordResetEmail(email).then(() => {
         setPending(false);
-        // Show success alert message
         props.onFormAlert({
           type: "success",
           message: "Password reset email sent",
@@ -38,7 +35,6 @@ function AuthForm(props) {
     changepass: ({ pass }) => {
       return auth.confirmPasswordReset(pass).then(() => {
         setPending(false);
-        // Show success alert message
         props.onFormAlert({
           type: "success",
           message: "Your password has been changed",
@@ -47,18 +43,13 @@ function AuthForm(props) {
     },
   };
 
-  // Handle form submission
   const onSubmit = ({ email, pass }) => {
-    // Show pending indicator
     setPending(true);
-
-    // Call submit handler for auth type
     submitHandlersByType[props.type]({
       email,
       pass,
     }).catch((error) => {
       setPending(false);
-      // Show error alert message
       props.onFormAlert({
         type: "error",
         message: error.message,

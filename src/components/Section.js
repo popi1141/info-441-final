@@ -1,5 +1,4 @@
 import React from "react";
-import BackgroundImage from "components/BackgroundImage";
 
 function Section(props) {
   const {
@@ -23,14 +22,6 @@ function Section(props) {
       }
       {...otherProps}
     >
-      {bgImage && (
-        <BackgroundImage
-          image={bgImage}
-          opacity={bgImageOpacity}
-          repeat={bgImageRepeat}
-        />
-      )}
-
       <div
         className={
           "" +

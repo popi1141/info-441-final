@@ -13,15 +13,12 @@ function SettingsPassword(props) {
   const { register, handleSubmit, errors, reset, getValues } = useForm();
 
   const onSubmit = (data) => {
-    // Show pending indicator
     setPending(true);
 
     auth
       .updatePassword(data.pass)
       .then(() => {
-        // Clear form
         reset();
-        // Set success status
         props.onStatus({
           type: "success",
           message: "Your password has been updated",
@@ -29,14 +26,11 @@ function SettingsPassword(props) {
       })
       .catch((error) => {
         if (error.code === "auth/requires-recent-login") {
-          // Update state to show re-authentication modal
           props.onStatus({
             type: "requires-recent-login",
-            // Resubmit after reauth flow
             callback: () => onSubmit({ pass: data.pass }),
           });
         } else {
-          // Set error status
           props.onStatus({
             type: "error",
             message: error.message,
@@ -44,7 +38,6 @@ function SettingsPassword(props) {
         }
       })
       .finally(() => {
-        // Hide pending indicator
         setPending(false);
       });
   };
