@@ -6,34 +6,21 @@ function Meta(props) {
   const { children, ...customPageMeta } = props;
   const router = useRouter();
 
-  // Meta values that are the same across all pages
   const globalMeta = {
-    // Site name
-    siteName: "My App",
-    // Your production domain (example: https://myapp.com)
+    siteName: "Clowntown",
     domain: "",
-    // Your Twitter handle (example: @divjoy)
     twitterHandle: "",
   };
 
-  // Default meta values for current page (override with props)
   const defaultPageMeta = {
-    // Page title
-    title: "My App",
-    // Page description
-    description: "My app description",
-    // Social share image (create this file in /public/images/)
+    title: "Clowntown",
+    description: "Where clowns play",
     image: "/images/social.png",
-    // Page type (see https://ogp.me/#types)
     type: "website",
   };
 
-  // Construct meta object from global, default, and custom meta
   const meta = { ...globalMeta, ...defaultPageMeta, ...customPageMeta };
 
-  // Note: Each tag should have a unique `key` so that they are de-deduped if other
-  // `Meta` components are rendered on the same page or within nested components.
-  // prettier-ignore
   return (
     <Head>
       <title>{meta.title}</title>

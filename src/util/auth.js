@@ -32,9 +32,7 @@ import { useUser, createUser, updateUser } from "./db";
 import router from "next/router";
 import PageLoader from "./../components/PageLoader";
 
-// Whether to merge extra user data from database into `auth.user`
 const MERGE_DB_USER = true;
-// Whether to send email verification on signup
 const EMAIL_VERIFICATION = false;
 
 // Initialize Firebase auth
@@ -44,7 +42,6 @@ const auth = getAuth(firebaseApp);
 // any component to subscribe to auth and re-render when it changes.
 const authContext = createContext();
 export const useAuth = () => useContext(authContext);
-// This should wrap the app in `src/pages/_app.js`
 export function AuthProvider({ children }) {
   const auth = useAuthProvider();
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;

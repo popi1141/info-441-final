@@ -23,8 +23,6 @@ function SettingsPage(props) {
   );
 }
 
-// Tell Next.js to export static files for each page
-// See https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation
 export const getStaticPaths = () => ({
   paths: [
     { params: { section: "general" } },
