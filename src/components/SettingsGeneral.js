@@ -14,13 +14,11 @@ function SettingsGeneral(props) {
 
   const onSubmit = (data) => {
     console.log(data);
-    // Show pending indicator
     setPending(true);
 
     return auth
       .updateProfile(data)
       .then(() => {
-        // Set success status
         props.onStatus({
           type: "success",
           message: "Your profile has been updated",
@@ -30,11 +28,9 @@ function SettingsGeneral(props) {
         if (error.code === "auth/requires-recent-login") {
           props.onStatus({
             type: "requires-recent-login",
-            // Resubmit after reauth flow
             callback: () => onSubmit(data),
           });
         } else {
-          // Set error status
           props.onStatus({
             type: "error",
             message: error.message,
@@ -42,7 +38,6 @@ function SettingsGeneral(props) {
         }
       })
       .finally(() => {
-        // Hide pending indicator
         setPending(false);
       });
   };

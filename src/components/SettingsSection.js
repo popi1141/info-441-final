@@ -13,8 +13,6 @@ function SettingsSection(props) {
   const auth = useAuth();
   const [formAlert, setFormAlert] = useState(null);
 
-  // State to control whether we show a re-authentication flow
-  // Required by some security sensitive actions, such as changing password.
   const [reauthState, setReauthState] = useState({
     show: false,
   });
@@ -27,21 +25,14 @@ function SettingsSection(props) {
 
   const section = validSections[props.section] ? props.section : "general";
 
-  // Handle status of type "success", "error", or "requires-recent-login"
-  // We don't treat "requires-recent-login" as an error as we handle it
-  // gracefully by taking the user through a re-authentication flow.
   const handleStatus = ({ type, message, callback }) => {
     if (type === "requires-recent-login") {
-      // First clear any existing message
       setFormAlert(null);
-      // Then update state to show re-authentication modal
       setReauthState({
         show: true,
-        // Failed action to try again after reauth
         callback: callback,
       });
     } else {
-      // Display message to user (type is success or error)
       setFormAlert({
         type: type,
         message: message,
