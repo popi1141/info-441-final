@@ -9,7 +9,7 @@ https://www.clowntown.me/
 
 ## Acknowledgements & Legals
 
-* Basic functionality code was bootstrapped utilizing a variety of starter/boilerplate code from LogRocket, StackOverflow, YouTube tutorials and Divjoy.
+* Basic functionality code was bootstrapped utilizing a variety of starter/boilerplate code from LogRocket, StackOverflow, YouTube tutorials and Divjoy. Acknowledgements below.
 * Clown assets used for Clownsonas are wholly original drawn by Victor Maciel.
 
 ## Resources
