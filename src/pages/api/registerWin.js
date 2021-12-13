@@ -3,7 +3,6 @@ import { getUserInfo, updateUser } from "util/db";
 
 export default async function handler(req, res) {
   try {
-    console.log("heyo")
     const response = await getUserInfo(req.query.uid)
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
